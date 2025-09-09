@@ -1,5 +1,6 @@
 package br.com.cesarlucasjunior.bookstore_api.service;
 
+import br.com.cesarlucasjunior.bookstore_api.exception.BookNotFoundException;
 import br.com.cesarlucasjunior.bookstore_api.model.Book;
 import br.com.cesarlucasjunior.bookstore_api.repository.BookRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,6 @@ public class BookService {
     }
 
     public Book getBookById(Long id) {
-        return bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado no bd"));
+        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
     }
 }
