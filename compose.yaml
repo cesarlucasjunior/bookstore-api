@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:13.9
+    restart: always
+    environment:
+      POSTGRES_USER: bookstore-api
+      POSTGRES_PASSWORD: admin_9876
+      POSTGRES_DB: bookstore
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d

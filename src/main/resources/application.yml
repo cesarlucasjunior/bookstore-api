@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookstore
+    username: bookstore-api
+    password: admin_9876
+  jpa:
+    hibernate:
+      ddl-auto: none # Flyway controls the schema
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
