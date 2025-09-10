@@ -14,18 +14,29 @@ import java.math.BigDecimal;
 public class Book{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(nullable = false, length = 255)
-    String title;
+    private String title;
     @Column(nullable = false, length = 255)
-    String author;
+    private String author;
     @Column(nullable = false, length = 255)
-    String publisher;
+    private String publisher;
     @Column(name = "year_publication")
-    Integer yearPublication;
-    BigDecimal price;
+    private Integer yearPublication;
+    private BigDecimal price;
     @Column(name = "cover_url", nullable = false, length = 255)
-    String coverUrl;
+    private String coverUrl;
+
+    public Book(){}
+
+    public Book(String title, String author, String publisher, Integer yearPublication, BigDecimal price, String coverUrl) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.yearPublication = yearPublication;
+        this.price = price;
+        this.coverUrl = coverUrl;
+    }
 
     public Long getId() {
         return id;

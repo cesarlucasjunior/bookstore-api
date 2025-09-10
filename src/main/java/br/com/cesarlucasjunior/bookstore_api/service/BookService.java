@@ -1,5 +1,6 @@
 package br.com.cesarlucasjunior.bookstore_api.service;
 
+import br.com.cesarlucasjunior.bookstore_api.dto.BookRequest;
 import br.com.cesarlucasjunior.bookstore_api.exception.BookNotFoundException;
 import br.com.cesarlucasjunior.bookstore_api.model.Book;
 import br.com.cesarlucasjunior.bookstore_api.repository.BookRepository;
@@ -22,5 +23,17 @@ public class BookService {
 
     public Book getBookById(Long id) {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+    }
+
+    public Book insert(BookRequest bookRequest) {
+        Book book = new Book(
+                bookRequest.title(),
+                bookRequest.author(),
+                bookRequest.publisher(),
+                bookRequest.yearPublication(),
+                bookRequest.price(),
+                bookRequest.coverUrl()
+        );
+        return bookRepository.save(book);
     }
 }
