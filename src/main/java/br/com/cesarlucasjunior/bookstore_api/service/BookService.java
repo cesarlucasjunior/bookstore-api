@@ -36,4 +36,20 @@ public class BookService {
         );
         return bookRepository.save(book);
     }
+
+    public void delete(Long id) {
+        Book book = getBookById(id);
+        bookRepository.delete(book);
+    }
+
+    public Book update(Long id, BookRequest bookRequest) {
+        Book book = getBookById(id);
+        book.setAuthor(bookRequest.author());
+        book.setPrice(bookRequest.price());
+        book.setTitle(bookRequest.title());
+        book.setCoverUrl(bookRequest.coverUrl());
+        book.setPublisher(bookRequest.publisher());
+        book.setYearPublication(bookRequest.yearPublication());
+        return bookRepository.save(book);
+    }
 }
