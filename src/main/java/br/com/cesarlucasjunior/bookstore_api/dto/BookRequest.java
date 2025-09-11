@@ -1,5 +1,7 @@
 package br.com.cesarlucasjunior.bookstore_api.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
 
 public record BookRequest(
@@ -8,6 +10,6 @@ public record BookRequest(
         String publisher,
         Integer yearPublication,
         BigDecimal price,
-        String coverUrl
+        MultipartFile coverImage
 ) {
 }

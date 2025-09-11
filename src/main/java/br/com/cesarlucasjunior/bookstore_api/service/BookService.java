@@ -6,6 +6,7 @@ import br.com.cesarlucasjunior.bookstore_api.model.Book;
 import br.com.cesarlucasjunior.bookstore_api.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -13,8 +14,11 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    public BookService(BookRepository bookRepository) {
+    private final S3Service s3Service;
+
+    public BookService(BookRepository bookRepository, S3Service s3Service) {
         this.bookRepository = bookRepository;
+        this.s3Service = s3Service;
     }
 
     public List<Book> getAllBooks() {
@@ -25,14 +29,18 @@ public class BookService {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
     }
 
-    public Book insert(BookRequest bookRequest) {
+    public Book insert(BookRequest bookRequest) throws IOException {
+
+        String coverUrl = s3Service.uploadFile(bookRequest.coverImage());
+
+
         Book book = new Book(
                 bookRequest.title(),
                 bookRequest.author(),
                 bookRequest.publisher(),
                 bookRequest.yearPublication(),
                 bookRequest.price(),
-                bookRequest.coverUrl()
+                coverUrl
         );
         return bookRepository.save(book);
     }
@@ -47,7 +55,7 @@ public class BookService {
         book.setAuthor(bookRequest.author());
         book.setPrice(bookRequest.price());
         book.setTitle(bookRequest.title());
-        book.setCoverUrl(bookRequest.coverUrl());
+//        book.setCoverUrl(bookRequest.coverUrl());
         book.setPublisher(bookRequest.publisher());
         book.setYearPublication(bookRequest.yearPublication());
         return bookRepository.save(book);
