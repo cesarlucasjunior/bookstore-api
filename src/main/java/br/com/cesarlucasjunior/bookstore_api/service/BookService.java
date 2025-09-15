@@ -1,10 +1,12 @@
 package br.com.cesarlucasjunior.bookstore_api.service;
 
 import br.com.cesarlucasjunior.bookstore_api.dto.BookRequest;
+import br.com.cesarlucasjunior.bookstore_api.exception.BookCreationException;
 import br.com.cesarlucasjunior.bookstore_api.exception.BookNotFoundException;
 import br.com.cesarlucasjunior.bookstore_api.model.Book;
 import br.com.cesarlucasjunior.bookstore_api.repository.BookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,22 +31,6 @@ public class BookService {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
     }
 
-    public Book insert(BookRequest bookRequest) throws IOException {
-
-        String coverUrl = s3Service.uploadFile(bookRequest.coverImage());
-
-
-        Book book = new Book(
-                bookRequest.title(),
-                bookRequest.author(),
-                bookRequest.publisher(),
-                bookRequest.yearPublication(),
-                bookRequest.price(),
-                coverUrl
-        );
-        return bookRepository.save(book);
-    }
-
     public void delete(Long id) {
         Book book = getBookById(id);
         bookRepository.delete(book);
@@ -58,6 +44,39 @@ public class BookService {
 //        book.setCoverUrl(bookRequest.coverUrl());
         book.setPublisher(bookRequest.publisher());
         book.setYearPublication(bookRequest.yearPublication());
+        return bookRepository.save(book);
+    }
+
+    public Book insert(BookRequest bookRequest) {
+        String coverUrl = null;
+
+        try {
+            coverUrl = uploadCoverImage(bookRequest.coverImage());
+            return saveBook(bookRequest, coverUrl);
+        } catch (IOException e) {
+            if (coverUrl != null) safeDeleteCover(coverUrl);
+            throw new BookCreationException(e);
+        }
+
+    }
+
+    private String uploadCoverImage(MultipartFile coverImage) throws IOException {
+        return s3Service.uploadFile(coverImage);
+    }
+
+    private void safeDeleteCover(String fileName) {
+        s3Service.deleteFile(fileName);
+    }
+
+    private Book saveBook(BookRequest bookRequest, String coverUrl) {
+        Book book = new Book(
+                bookRequest.title(),
+                bookRequest.author(),
+                bookRequest.publisher(),
+                bookRequest.yearPublication(),
+                bookRequest.price(),
+                coverUrl
+        );
         return bookRepository.save(book);
     }
 }
